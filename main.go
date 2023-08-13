@@ -102,7 +102,7 @@ func do(mode Mode, path string, begin, end uint64) error {
 			return fmt.Errorf("Length error: should be %d, but is %d", len(buf), n)
 		}
 		if mode == Mode_Verify && bytes.Compare(buf2, buf) != 0 {
-			fmt.Printf("Compare error from %d to %d\n", i, i + blockSize)
+			fmt.Printf("Compare error from %d to %d\n", i, i+blockSize)
 			break
 		}
 
