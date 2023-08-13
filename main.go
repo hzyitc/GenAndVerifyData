@@ -13,7 +13,9 @@ import (
 	"time"
 )
 
-const program = "GenAndVerifyData"
+var program = "GenAndVerifyData"
+var version = "v0.0.0"
+
 const displayInterval = 1024 * 1024 * 16
 const blockSize = 4096
 
@@ -129,6 +131,7 @@ func feature() {
 }
 
 func usage() {
+	fmt.Printf("%s(%s)\n", program, version)
 	fmt.Printf("Usage: \n")
 	fmt.Printf("  %s [-write|-verify] {path} [begin [end]]\n", program)
 	fmt.Printf("    -write    Write only\n")

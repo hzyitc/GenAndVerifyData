@@ -4,8 +4,12 @@ OUTPUT="bin/"
 PROGRAM="GenAndVerifyData"
 LDFLAGS="-s -w"
 
+ver="$(git describe --tags --match "v*" --dirty="" 2>/dev/null || git log -1 --pretty=format:"v0.0.0-%h" 2>/dev/null || echo "v0.0.0")"
+[ -n "$(git status --porcelain |& grep -Ev '^\?\?')" ] && ver="$ver-$(date +"%Y%m%d-%H%M%S")"
+LDFLAGS="$LDFLAGS -X main.version=$ver"
+
 mkdir -p "${OUTPUT}"
-rm -f "${OUTPUT}/${PROGRAM}-"*
+rm -f "${OUTPUT}/${PROGRAM}_"*
 
 platforms=(
 	linux/386
@@ -29,7 +33,7 @@ for i in "${platforms[@]}"; do
 
 	[ "${os}" == "windows" ] && ext="exe"
 
-	filename="${OUTPUT}/${PROGRAM}-${os}-${arch}${ext:+.$ext}"
+	filename="${OUTPUT}/${PROGRAM}_${ver}_${os}_${arch}${ext:+.$ext}"
 	echo "build ${filename} for ${i}"
 	CGO_ENABLED=0 GOOS="${os}" GOARCH="${arch}" GOMIPS="${mips}" \
 		go build -trimpath -ldflags "${LDFLAGS}" -o "${filename}"
