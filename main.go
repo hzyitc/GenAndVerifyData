@@ -59,11 +59,11 @@ const (
 
 func do(mode Mode, path string, begin, end uint64) error {
 	if begin%blockSize != 0 {
-		return fmt.Errorf("Begin(%d) should be aligned to %d\n", begin, blockSize)
+		return fmt.Errorf("begin(%d) should be aligned to %d", begin, blockSize)
 	}
 
 	if end%blockSize != 0 {
-		return fmt.Errorf("End(%d) should be aligned to %d\n", end, blockSize)
+		return fmt.Errorf("end(%d) should be aligned to %d", end, blockSize)
 	}
 
 	buf := make([]byte, blockSize)
@@ -79,7 +79,7 @@ func do(mode Mode, path string, begin, end uint64) error {
 		return err
 	}
 	if uint64(pos) != begin {
-		return fmt.Errorf("Seek error: should be %d, but is %d", begin, pos)
+		return fmt.Errorf("seek error: should be %d, but is %d", begin, pos)
 	}
 
 	start := time.Now()
@@ -95,15 +95,15 @@ func do(mode Mode, path string, begin, end uint64) error {
 		case Mode_Verify:
 			n, err = syscall.Read(fd, buf2)
 		default:
-			return fmt.Errorf("Unknown mode: %d", mode)
+			return fmt.Errorf("unknown mode: %d", mode)
 		}
 		if err != nil {
 			return err
 		}
 		if n != len(buf) {
-			return fmt.Errorf("Length error: should be %d, but is %d", len(buf), n)
+			return fmt.Errorf("length error: should be %d, but is %d", len(buf), n)
 		}
-		if mode == Mode_Verify && bytes.Compare(buf2, buf) != 0 {
+		if mode == Mode_Verify && !bytes.Equal(buf2, buf) {
 			fmt.Printf("Compare error from %d to %d\n", i, i+blockSize)
 			break
 		}
@@ -119,7 +119,7 @@ func do(mode Mode, path string, begin, end uint64) error {
 
 	syscall.Close(fd)
 
-	speed := float64(end-begin) / time.Now().Sub(start).Seconds()
+	speed := float64(end-begin) / time.Since(start).Seconds()
 	fmt.Printf("\nFinish. Avg: %.2fMB/s\n", (speed / 1024 / 1024))
 
 	return nil
